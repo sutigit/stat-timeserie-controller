@@ -21,9 +21,9 @@ class Environment {
         document.body.style.display = 'flex';
         document.body.style.justifyContent = 'center';
         document.body.style.alignItems = 'center';
-        document.body.style.backgroundImage = 'url(https://media.istockphoto.com/id/1411803980/vector/detailed-world-map-with-divided-countries-on-a-transparent-background.jpg?s=612x612&w=0&k=20&c=D0z5IYiAqDXVdNCyNJeH2WcseqXfM3KodS1iu9rtEZY=)';
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
+        // document.body.style.backgroundImage = 'url(https://media.istockphoto.com/id/1411803980/vector/detailed-world-map-with-divided-countries-on-a-transparent-background.jpg?s=612x612&w=0&k=20&c=D0z5IYiAqDXVdNCyNJeH2WcseqXfM3KodS1iu9rtEZY=)';
+        // document.body.style.backgroundSize = 'cover';
+        // document.body.style.backgroundPosition = 'center';
         document.body.style.margin = '0';
     }
 
