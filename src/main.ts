@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-import PlayIcon from './src/play.svg';
 
 // Style body element ---------------------------------------------------------------------
 document.body.style.width = '100%';
