@@ -28,7 +28,7 @@ container.style.display = 'flex';
 container.style.justifyContent = 'center';
 container.style.alignItems = 'center';
 
-container.style.marginTop = '700px';
+container.style.marginTop = '750px';
 // Rounded borders
 container.style.borderRadius = '24px';
 // overflow hidden
@@ -78,7 +78,7 @@ timeseries.appendChild(labelRenderer.domElement);
 
 // Adding shapes here --------------------------------------------------------------------
 // Create a square with PlaneGeometry
-const sqWidth = 0.8;
+const sqWidth = 1;
 const sqHeight = 0.6;
 const timeseriesGeom = new THREE.PlaneGeometry(sqWidth, sqHeight);  // 2x1 rectangle
 const timeseriesMat = new THREE.MeshBasicMaterial({ color: 0x5f5d61, side: THREE.DoubleSide });
@@ -98,9 +98,9 @@ for (let i = -numYears / 2; i < numYears / 2; i++) {
 const centerGeom = new THREE.PlaneGeometry(0.15, 1);
 const centerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
 
-const square = new THREE.Mesh(centerGeom, centerMat);
-square.position.set(0, 0.2, 0);
-scene.add(square);
+const tick = new THREE.Mesh(centerGeom, centerMat);
+tick.position.set(0, 0.2, 0);
+scene.add(tick);
 
 
 
