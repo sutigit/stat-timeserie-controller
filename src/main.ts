@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import PlayIcon from './src/play.svg';
 
 // Style body element ---------------------------------------------------------------------
 document.body.style.width = '100%';
@@ -20,11 +21,14 @@ document.body.style.margin = '0';
 const container = document.createElement('div');
 
 // Give css style
-container.style.width = '500px';
-container.style.height = '200px';
-container.style.backgroundColor = '#221f22ee';
+container.style.width = '600px';
+container.style.height = '160px';
+container.style.backgroundColor = '#221f22de';
+container.style.display = 'flex';
+container.style.justifyContent = 'center';
+container.style.alignItems = 'center';
 
-container.style.marginTop = '300px';
+container.style.marginTop = '700px';
 // Rounded borders
 container.style.borderRadius = '24px';
 // overflow hidden
@@ -48,7 +52,7 @@ timeseries.style.height = '100%';
 timeseries.style.position = 'relative';
 // Add a CSS mask to create the fade-out effect at the edges
 timeseries.style.maskImage = `
-linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)
+linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%)
 `; // TODO: add Safari support
 
 container.appendChild(timeseries);
@@ -77,7 +81,7 @@ timeseries.appendChild(labelRenderer.domElement);
 const sqWidth = 0.8;
 const sqHeight = 0.6;
 const timeseriesGeom = new THREE.PlaneGeometry(sqWidth, sqHeight);  // 2x1 rectangle
-const timeseriesMat = new THREE.MeshBasicMaterial({ color: 0x403e41, side: THREE.DoubleSide });
+const timeseriesMat = new THREE.MeshBasicMaterial({ color: 0x5f5d61, side: THREE.DoubleSide });
 
 
 // Add timeseries rectangles to the scene
@@ -86,7 +90,7 @@ const numYears = 2100 - 1800;
 
 for (let i = -numYears / 2; i < numYears / 2; i++) {
     const square = new THREE.Mesh(timeseriesGeom, timeseriesMat);
-    square.position.setX(i * (sqWidth + gap) + (sqWidth / 2));  // Multiply by (sqWidth + gap)
+    square.position.set(i * (sqWidth + gap) + (sqWidth / 2), 0.2, 0);  // Multiply by (sqWidth + gap)
     scene.add(square);
 }
 
@@ -95,6 +99,7 @@ const centerGeom = new THREE.PlaneGeometry(0.15, 1);
 const centerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
 
 const square = new THREE.Mesh(centerGeom, centerMat);
+square.position.set(0, 0.2, 0);
 scene.add(square);
 
 
@@ -108,17 +113,46 @@ for (let i = -numYears / 2; i < numYears / 2; i++) {
     year.style.color = '#ffffff';
     year.style.fontFamily = 'Monospace';
     year.style.fontWeight = 'bold';
-    year.style.fontSize = '14px'
+    year.style.fontSize = '12px'
     year.textContent = yearNum.toString();
 
     if (yearNum === 1987) {
-        year.style.fontSize = '34px';
+        year.style.fontSize = '24px';
     }
 
     const label = new CSS2DObject(year);
-    label.position.set(i * 4, 1.8, 0);
+    label.position.set(i * 4, 2, 0);
     scene.add(label);
 }
+
+
+
+// Add controllers to the scene ----------------------------------------------------------
+const playPauseButton = document.createElement('img');
+playPauseButton.src = 'src/play.svg'; // Initial state: Play button
+playPauseButton.style.width = '38px';
+playPauseButton.style.height = '38px';
+playPauseButton.style.cursor = 'pointer';
+
+let isPlaying = false;
+
+playPauseButton.addEventListener('click', () => {
+    if (isPlaying) {
+        // Currently playing, switch to pause state
+        console.log('pause button clicked');
+        playPauseButton.src = 'src/play.svg'; // Switch to play icon
+    } else {
+        // Currently paused, switch to play state
+        console.log('play button clicked');
+        playPauseButton.src = 'src/pause.svg'; // Switch to pause icon
+    }
+    isPlaying = !isPlaying; // Toggle the state
+});
+
+const tPlayPauseButton = new CSS2DObject(playPauseButton);
+tPlayPauseButton.position.set(0, -2, 0);
+
+scene.add(tPlayPauseButton);
 
 
 
