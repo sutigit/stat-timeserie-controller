@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
 // Style body element ---------------------------------------------------------------------
@@ -10,43 +8,79 @@ document.body.style.display = 'flex';
 document.body.style.justifyContent = 'center';
 document.body.style.alignItems = 'center';
 
+// Set background image
+document.body.style.backgroundImage = 'url(https://media.istockphoto.com/id/1411803980/vector/detailed-world-map-with-divided-countries-on-a-transparent-background.jpg?s=612x612&w=0&k=20&c=D0z5IYiAqDXVdNCyNJeH2WcseqXfM3KodS1iu9rtEZY=)'
+document.body.style.backgroundSize = 'cover';
+document.body.style.backgroundPosition = 'center';
+
+// Remove margin
+document.body.style.margin = '0';
+
 // Create container element ---------------------------------------------------------------
 const container = document.createElement('div');
 
 // Give css style
-container.style.width = '600px';
-container.style.height = '400px';
+container.style.width = '500px';
+container.style.height = '200px';
+container.style.backgroundColor = '#221f22ee';
+
 container.style.marginTop = '300px';
 // Rounded borders
-container.style.borderRadius = '12px';
+container.style.borderRadius = '24px';
 // overflow hidden
 container.style.overflow = 'hidden';
+
+// Add a background blur effect
+container.style.backdropFilter = 'blur(8px)'; // TODO: add Safari support
+
+
+
 
 // add it to the body
 document.body.appendChild(container);
 
 
+// Create timeseries element ---------------------------------------------------------------
 
-// THREE.js starts from here!!
+const timeseries = document.createElement('div');
+timeseries.style.width = '100%';
+timeseries.style.height = '100%';
+timeseries.style.position = 'relative';
+// Add a CSS mask to create the fade-out effect at the edges
+timeseries.style.maskImage = `
+linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)
+`; // TODO: add Safari support
 
-// Create a scene, camera and renderer ---------------------------------------------------------
+container.appendChild(timeseries);
+
+
+
+// THREE.js starts from here!! --------------------------------------------------------------------------------
+
+// Create a scene, camera, renderer and label renderer ------------------------------------
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xeeeeee);
 const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(container.offsetWidth, container.offsetHeight);
-container.appendChild(renderer.domElement);
+timeseries.appendChild(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(container.offsetWidth, container.offsetHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0px';
+timeseries.appendChild(labelRenderer.domElement);
 
 
 // Adding shapes here --------------------------------------------------------------------
 // Create a square with PlaneGeometry
-const sqWidth = 0.5;
-const sqHeight = 0.5;
+const sqWidth = 0.8;
+const sqHeight = 0.6;
 const timeseriesGeom = new THREE.PlaneGeometry(sqWidth, sqHeight);  // 2x1 rectangle
-const timeseriesMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+const timeseriesMat = new THREE.MeshBasicMaterial({ color: 0x403e41, side: THREE.DoubleSide });
 
 
-// Add timeseries rects to the scene
+// Add timeseries rectangles to the scene
 const gap = sqWidth / 4; // This is the gap size between each square
 const numYears = 2100 - 1800;
 
@@ -56,33 +90,36 @@ for (let i = -numYears / 2; i < numYears / 2; i++) {
     scene.add(square);
 }
 
-// Add center rect to the scene
-const centerGeom = new THREE.PlaneGeometry(0.1, 1);
-const centerMat = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+// Add center rectangle to the scene
+const centerGeom = new THREE.PlaneGeometry(0.15, 1);
+const centerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
 
 const square = new THREE.Mesh(centerGeom, centerMat);
 scene.add(square);
 
-camera.position.z = 5;
-renderer.render(scene, camera);
 
-// Add texts geometry
-const moonDiv = document.createElement( 'div' );
-moonDiv.textContent = 'Moon';
-moonDiv.style.color = 'white';
-moonDiv.style.backgroundColor = 'transparent';
 
-const moonLabel = new CSS2DObject( moonDiv );
-moonLabel.position.set( 1.5, 1, 0 );
-moonLabel.center.set( 0, 1 );
-scene.add( moonLabel );
-moonLabel.layers.set( 0 );
+// Add texts to the scene ----------------------------------------------------------------
+for (let i = -numYears / 2; i < numYears / 2; i++) {
+    // Create a DOM element for year label)
+    const year = document.createElement('div');
 
-const labelRenderer = new CSS2DRenderer();
-labelRenderer.setSize( window.innerWidth, window.innerHeight );
-labelRenderer.domElement.style.position = 'absolute';
-labelRenderer.domElement.style.top = '0px';
-document.body.appendChild( labelRenderer.domElement );
+    const yearNum = 1987 + i;
+    year.style.color = '#ffffff';
+    year.style.fontFamily = 'Monospace';
+    year.style.fontWeight = 'bold';
+    year.style.fontSize = '14px'
+    year.textContent = yearNum.toString();
+
+    if (yearNum === 1987) {
+        year.style.fontSize = '34px';
+    }
+
+    const label = new CSS2DObject(year);
+    label.position.set(i * 4, 1.8, 0);
+    scene.add(label);
+}
+
 
 
 
@@ -90,8 +127,12 @@ document.body.appendChild( labelRenderer.domElement );
 // Set camera position
 camera.position.z = 5;
 
+// Camera background transparent
+renderer.setClearColor(0x000000, 0);
+
 // Render the scene
 renderer.render(scene, camera);
+labelRenderer.render(scene, camera);
 
 
 
@@ -104,3 +145,5 @@ renderer.render(scene, camera);
 // }
 
 // animate();
+
+
