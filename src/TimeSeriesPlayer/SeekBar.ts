@@ -50,25 +50,29 @@ export default class SeekBar {
         if (this.isAnimating) return;  // Prevent starting multiple animations
         this.isAnimating = true;
         
-        const duration = 20; // seconds
-        const distance = 0.01; // distance to move squares
+        const yearDuration = 2000; // 2 seconds
+        const yearDistance = this.rectWidth + this.gap; // distance to move squares
 
-        const startTime = performance.now();
+        let last = performance.now();
+        let timeProgress = 0;
 
-        const animate = (time: number) => {
+        const animate = (currentTime: number) => {
             if (!this.isAnimating) return;  // Stop animation if user clicks pause button
 
-            const elapsedTime = (time - startTime) / 1000;
-            const progress = Math.min(elapsedTime / duration, 1);  // Normalize to [0, 1]
+            const tickTime = currentTime - last;
+            const tickDistance = (tickTime / yearDuration) * yearDistance;
             
             this.squares.forEach((square) => {
                 // Animate the squares by changing their x position
-                square.position.x -= distance
+                square.position.x -= tickDistance;
             });
+
+            timeProgress += tickTime
+            last = currentTime;
 
             this.sceneManager.render(); // Render the scene after updating square positions
             
-            if (progress < 1) {
+            if (timeProgress <= yearDuration) {
                 requestAnimationFrame(animate);
             } else {
                 this.isAnimating = false; // Reset animation state after completion

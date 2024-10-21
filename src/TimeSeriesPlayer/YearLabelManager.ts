@@ -27,9 +27,11 @@ export default class YearLabelManager {
             year.style.willChange = 'font-size'; // Optimize for animation
 
             if (yearNum === 1987) {
-                setTimeout(() => {
-                    year.style.fontSize = '24px';  // Change the font size after rendering
-                }, 1000); // Small delay to ensure transition is visible
+                // setTimeout(() => {
+                //     year.style.fontSize = '24px';  // Change the font size after rendering
+                // }, 1000); // Small delay to ensure transition is visible
+
+                year.style.fontSize = '24px';  // Change the font size after rendering
             }
 
             const label = new CSS2DObject(year);
