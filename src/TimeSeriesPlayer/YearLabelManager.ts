@@ -22,9 +22,14 @@ export default class YearLabelManager {
             year.style.fontWeight = 'bold';
             year.style.fontSize = '12px';
             year.textContent = yearNum.toString();
+            // transition: font-size 0.5s ease; /* Adjust the time and easing */
+            year.style.transition = 'font-size 0.1s ease';
+            year.style.willChange = 'font-size'; // Optimize for animation
 
             if (yearNum === 1987) {
-                year.style.fontSize = '24px';
+                setTimeout(() => {
+                    year.style.fontSize = '24px';  // Change the font size after rendering
+                }, 1000); // Small delay to ensure transition is visible
             }
 
             const label = new CSS2DObject(year);
