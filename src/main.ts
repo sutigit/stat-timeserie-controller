@@ -1,7 +1,7 @@
 import SceneManager from './TimeSeriesPlayer/SceneManager';
 import SeekBar from './TimeSeriesPlayer/SeekBar';
 import YearLabelManager from './TimeSeriesPlayer/YearLabelManager';
-import PlayButton from './TimeSeriesPlayer/PlayButton';
+import Controller from './TimeSeriesPlayer/Controller';
 import Environment from './Environment';
 
 class App {
@@ -9,7 +9,7 @@ class App {
     sceneManager: SceneManager;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager;
-    playButton: PlayButton;
+    controller: Controller;
 
     constructor() {
         this.environment = new Environment();
@@ -17,7 +17,7 @@ class App {
 
         this.seekBar = new SeekBar(this.sceneManager);
         this.yearLabelManager = new YearLabelManager(this.sceneManager.getScene());
-        this.playButton = new PlayButton(this.sceneManager.getScene());
+        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager);
 
         this.init();
     }

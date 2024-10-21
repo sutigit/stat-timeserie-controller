@@ -46,7 +46,7 @@ export default class SeekBar {
         this.scene.add(tick);
     }
 
-    animateSquares() {
+    startAnimation() {
         if (this.isAnimating) return;  // Prevent starting multiple animations
         this.isAnimating = true;
         
@@ -56,6 +56,8 @@ export default class SeekBar {
         const startTime = performance.now();
 
         const animate = (time: number) => {
+            if (!this.isAnimating) return;  // Stop animation if user clicks pause button
+
             const elapsedTime = (time - startTime) / 1000;
             const progress = Math.min(elapsedTime / duration, 1);  // Normalize to [0, 1]
             
@@ -74,5 +76,9 @@ export default class SeekBar {
         };
 
         requestAnimationFrame(animate);
+    }
+
+    stopAnimation() {
+        this.isAnimating = false;
     }
 }
