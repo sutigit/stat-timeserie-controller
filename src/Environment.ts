@@ -10,7 +10,7 @@ export default class Environment {
         document.body.appendChild(this.container);
     }
 
-    setupBodyStyle() {
+    private setupBodyStyle() {
         document.body.style.width = '100%';
         document.body.style.height = '100%';
         document.body.style.display = 'flex';
@@ -22,7 +22,7 @@ export default class Environment {
         document.body.style.margin = '0';
     }
 
-    createContainer() {
+    private createContainer() {
         const container = document.createElement('div');
         container.style.width = '600px';
         container.style.height = '160px';
@@ -37,7 +37,7 @@ export default class Environment {
         return container;
     }
 
-    createTimeSeriesPlayer() {
+    private createTimeSeriesPlayer() {
         const timeseries = document.createElement('div');
         timeseries.style.width = '100%';
         timeseries.style.height = '100%';

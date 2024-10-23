@@ -17,6 +17,7 @@ class App {
 
         this.seekBar = new SeekBar(this.sceneManager);
         this.yearLabelManager = new YearLabelManager(this.sceneManager.getScene());
+        
         this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager);
 
         this.init();

@@ -25,7 +25,7 @@ export default class SeekBar {
         this.createCenterTick();
     }
 
-    createSeekBar() {
+    private createSeekBar() {
         const geometry = new THREE.PlaneGeometry(this.rectWidth, this.rectHeight);
         const material = new THREE.MeshBasicMaterial({ color: 0x5f5d61 });
 
@@ -37,7 +37,7 @@ export default class SeekBar {
         }
     }
 
-    createCenterTick() {
+    private createCenterTick() {
         const centerGeom = new THREE.PlaneGeometry(0.15, 1);
         const centerMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
@@ -50,10 +50,10 @@ export default class SeekBar {
         if (this.isAnimating) return;  // Prevent starting multiple animations
         this.isAnimating = true;
         
-        const yearDuration = 2000; // 2 seconds
+        const yearDuration = 1000; // 2 seconds
         const yearDistance = this.rectWidth + this.gap; // distance to move squares
 
-        let last = performance.now();
+        let last = performance.now(); // Use performance.now() for precise timing
         let timeProgress = 0;
 
         const animate = (currentTime: number) => {
@@ -72,6 +72,7 @@ export default class SeekBar {
 
             this.sceneManager.render(); // Render the scene after updating square positions
             
+            // Determine if animation should continue
             if (timeProgress <= yearDuration) {
                 requestAnimationFrame(animate);
             } else {

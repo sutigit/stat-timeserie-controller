@@ -21,7 +21,7 @@ export default class PlayButton {
         this.createPlayButton();
     }
 
-    createPlayButton() {
+    private createPlayButton() {
         const playPauseImg = document.createElement('img');
         playPauseImg.src = 'src/play.svg';
         playPauseImg.style.width = '38px';

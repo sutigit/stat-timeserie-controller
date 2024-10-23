@@ -12,7 +12,7 @@ export default class YearLabelManager {
         this.addYearLabels();
     }
 
-    addYearLabels() {
+    private addYearLabels() {
         for (let i = -this.numYears / 2; i < this.numYears / 2; i++) {
             const year = document.createElement('div');
             const yearNum = 1987 + i;
