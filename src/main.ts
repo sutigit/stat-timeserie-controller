@@ -5,15 +5,13 @@ import Controller from './TimeSeriesPlayer/Controller';
 import Environment from './Environment';
 
 class App {
-    environment: Environment;
     sceneManager: SceneManager;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager;
     controller: Controller;
 
-    constructor() {
-        this.environment = new Environment();
-        this.sceneManager = new SceneManager(this.environment.getTimeSeriesPlayer());
+    constructor(hostComponent: HTMLDivElement) {
+        this.sceneManager = new SceneManager(hostComponent);
 
         this.seekBar = new SeekBar(this.sceneManager);
         this.yearLabelManager = new YearLabelManager(this.sceneManager);
@@ -29,4 +27,6 @@ class App {
 }
 
 // Initialize the application
-new App();
+const hostEnv = new Environment();
+const hostComponent = hostEnv.getTimeSeriesPlayer();
+new App(hostComponent);
