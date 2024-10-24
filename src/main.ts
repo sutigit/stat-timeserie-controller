@@ -3,26 +3,33 @@ import SeekBar from './TimeSeriesPlayer/SeekBar';
 import YearLabelManager from './TimeSeriesPlayer/YearLabelManager';
 import Controller from './TimeSeriesPlayer/Controller';
 import Environment from './Environment';
+import STICRead from './TimeSeriesPlayer/STICRead';
 
 class App {
-    sceneManager: SceneManager;
+    controller: Controller;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager;
-    controller: Controller;
+    sceneManager: SceneManager;
+    STICRead: STICRead;
 
     constructor(hostComponent: HTMLDivElement) {
         this.sceneManager = new SceneManager(hostComponent);
 
         this.seekBar = new SeekBar(this.sceneManager);
         this.yearLabelManager = new YearLabelManager(this.sceneManager);
+        this.STICRead = new STICRead();
         
-        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager);
+        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager, this.STICRead);
 
         this.init();
     }
 
-    init() {
+    private init() {
         this.sceneManager.render();
+    }
+
+    readData() {
+        this.STICRead.readData();
     }
 }
 

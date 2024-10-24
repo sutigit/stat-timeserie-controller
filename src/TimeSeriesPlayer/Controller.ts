@@ -3,19 +3,22 @@ import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import SceneManager from './SceneManager';
 import SeekBar from './SeekBar';
 import YearLabelManager from './YearLabelManager';
+import STICRead from './STICRead';
 
 export default class PlayButton {
     sceneManager: SceneManager;
     scene: THREE.Scene;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager
+    STICRead: STICRead;
     isPlaying: boolean;
 
-    constructor(sceneManager: SceneManager, seekBar: SeekBar, yearLabelManager: YearLabelManager) {
+    constructor(sceneManager: SceneManager, seekBar: SeekBar, yearLabelManager: YearLabelManager, STICRead: STICRead) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
         this.seekBar = seekBar;
         this.yearLabelManager = yearLabelManager;
+        this.STICRead = STICRead;
         this.isPlaying = false;
 
         this.createPlayButton();
