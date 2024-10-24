@@ -35,7 +35,7 @@ export default class PlayButton {
         this.scene.add(playPauseButton);
     }
 
-    togglePlayPause(playPauseImg: HTMLImageElement) {
+    private togglePlayPause(playPauseImg: HTMLImageElement) {
         if (this.isPlaying) {
             playPauseImg.src = 'src/play.svg';
             this.seekBar.stopAnimation();

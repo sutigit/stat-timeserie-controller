@@ -16,7 +16,7 @@ class App {
         this.sceneManager = new SceneManager(this.environment.getTimeSeriesPlayer());
 
         this.seekBar = new SeekBar(this.sceneManager);
-        this.yearLabelManager = new YearLabelManager(this.sceneManager.getScene());
+        this.yearLabelManager = new YearLabelManager(this.sceneManager);
         
         this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager);
 

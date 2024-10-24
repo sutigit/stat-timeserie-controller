@@ -1,18 +1,21 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import SceneManager from './SceneManager';
 
 export default class YearLabelManager {
+    sceneManager: SceneManager;
     scene: THREE.Scene;
     numYears: number;
 
-    constructor(scene: THREE.Scene) {
-        this.scene = scene;
+    constructor(sceneManager: SceneManager) {
+        this.sceneManager = sceneManager;
+        this.scene = sceneManager.getScene();
         this.numYears = 2100 - 1800;
 
-        this.addYearLabels();
+        this.createYearLabels();
     }
 
-    private addYearLabels() {
+    private createYearLabels() {
         for (let i = -this.numYears / 2; i < this.numYears / 2; i++) {
             const year = document.createElement('div');
             const yearNum = 1987 + i;

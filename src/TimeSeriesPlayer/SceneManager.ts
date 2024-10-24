@@ -19,7 +19,7 @@ export default class SceneManager {
         timeSeriesPlayer.appendChild(this.labelRenderer.domElement);
     }
 
-    setupRenderers(timeSeriesPlayer: HTMLDivElement) {
+    private setupRenderers(timeSeriesPlayer: HTMLDivElement) {
         this.renderer.setSize(timeSeriesPlayer.offsetWidth, timeSeriesPlayer.offsetHeight);
         this.labelRenderer.setSize(timeSeriesPlayer.offsetWidth, timeSeriesPlayer.offsetHeight);
         this.labelRenderer.domElement.style.position = 'absolute';
@@ -34,9 +34,5 @@ export default class SceneManager {
 
     getScene() {
         return this.scene;
-    }
-
-    getCamera() {
-        return this.camera;
     }
 }
