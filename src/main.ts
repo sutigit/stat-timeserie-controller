@@ -12,12 +12,12 @@ class App {
     sceneManager: SceneManager;
     STICRead: STICRead;
 
-    constructor(hostComponent: HTMLDivElement) {
+    constructor(hostComponent: HTMLDivElement, minYear: number, maxYear: number) {
         this.sceneManager = new SceneManager(hostComponent);
+        this.STICRead = new STICRead(minYear, maxYear);
 
-        this.seekBar = new SeekBar(this.sceneManager);
+        this.seekBar = new SeekBar(this.sceneManager, this.STICRead);
         this.yearLabelManager = new YearLabelManager(this.sceneManager);
-        this.STICRead = new STICRead();
         
         this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager, this.STICRead);
 
@@ -27,13 +27,10 @@ class App {
     private init() {
         this.sceneManager.render();
     }
-
-    readData() {
-        this.STICRead.readData();
-    }
 }
 
 // Initialize the application
 const hostEnv = new Environment();
 const hostComponent = hostEnv.getTimeSeriesPlayer();
-new App(hostComponent);
+
+new App(hostComponent, 1987, 2024);

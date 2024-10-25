@@ -10,7 +10,7 @@ export default class YearLabelManager {
     constructor(sceneManager: SceneManager) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
-        this.numYears = 2100 - 1800;
+        this.numYears = 2050 - 1950;
 
         this.createYearLabels();
     }
@@ -18,10 +18,10 @@ export default class YearLabelManager {
     private createYearLabels() {
         for (let i = -this.numYears / 2; i < this.numYears / 2; i++) {
             const year = document.createElement('div');
-            const yearNum = 1987 + i;
+            const yearNum = 2000 + i;
 
             year.style.color = '#ffffff';
-            year.style.fontFamily = 'Monospace';
+            year.style.fontFamily = 'Sans-Serif';
             year.style.fontWeight = 'bold';
             year.style.fontSize = '12px';
             year.textContent = yearNum.toString();
@@ -29,7 +29,7 @@ export default class YearLabelManager {
             year.style.transition = 'font-size 0.1s ease';
             year.style.willChange = 'font-size'; // Optimize for animation
 
-            if (yearNum === 1987) {
+            if (yearNum === 2000) {
                 // setTimeout(() => {
                 //     year.style.fontSize = '24px';  // Change the font size after rendering
                 // }, 1000); // Small delay to ensure transition is visible
@@ -39,6 +39,7 @@ export default class YearLabelManager {
 
             const label = new CSS2DObject(year);
             label.position.set(i * 4, 2, 0);
+            label.name = `label_${yearNum.toString()}`;
             this.scene.add(label);
         }
     }

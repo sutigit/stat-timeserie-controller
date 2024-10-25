@@ -1,89 +1,102 @@
 import * as THREE from 'three';
 import SceneManager from './SceneManager';
+import STICRead from './STICRead';
 
 export default class SeekBar {
+    // Dependent classes
+    sceneManager: SceneManager;
+    scene: THREE.Scene;
+    STICRead: STICRead;
+
+    // Geometry properties
     rectWidth: number;
     rectHeight: number;
     gap: number;
-    numYears: number;
-    sceneManager: SceneManager;
-    scene: THREE.Scene;
-    squares: THREE.Mesh[]; // Store all squares in seek bar
-    isAnimating: boolean;
+    seekBarOffsetY: number;
+    seekBarOffsetX: number;
 
-    constructor(sceneManager: SceneManager) {
+    // Time properties
+    minYear: number;
+    numOfYears: number;
+
+    // Meshes
+    seekBars: THREE.Mesh[]; // Store all squares in seek bar
+
+    constructor(sceneManager: SceneManager, STICRead: STICRead) {
+        this.sceneManager = sceneManager;
+        this.scene = sceneManager.getScene();
+        this.STICRead = STICRead;
+
         this.rectWidth = 2;
         this.rectHeight = 0.6;
         this.gap = this.rectWidth / 8;
-        this.numYears = 2050 - 1950;
-        this.sceneManager = sceneManager;
-        this.scene = sceneManager.getScene();
-        this.squares = [];
-        this.isAnimating = false;
+        this.seekBarOffsetY = 0.2;
+        this.seekBarOffsetX = -this.rectWidth / 2;
 
-        this.createSeekBar();
+        this.minYear = STICRead.getData('minYear');
+        this.numOfYears = STICRead.getData('numOfYears');
+
+        this.seekBars = [];
+
+        this.createSeekBars();
         this.createCenterTick();
     }
 
-    private createSeekBar() {
+    private createSeekBars() {
         const geometry = new THREE.PlaneGeometry(this.rectWidth, this.rectHeight);
-        const material = new THREE.MeshBasicMaterial({ color: 0x5f5d61 });
+        const activeColor = new THREE.MeshBasicMaterial({ color: 0x5f5d61 });
+        const inactiveColor = new THREE.MeshBasicMaterial({ color: 0x474649});
+        
+        const createCell = (name: string, position: number, active: boolean) => {
+            const mesh = new THREE.Mesh(geometry, active ? activeColor : inactiveColor);
+            mesh.position.set(position - this.seekBarOffsetX, this.seekBarOffsetY, 0);
+            mesh.name = name;
+            this.seekBars.push(mesh);
+            this.scene.add(mesh);
+        }
 
-        for (let i = -this.numYears / 2; i < this.numYears / 2; i++) {
-            const square = new THREE.Mesh(geometry, material);
-            square.position.set(i * (this.rectWidth + this.gap) + (this.rectWidth / 2), 0.2, 0);
-            this.squares.push(square);
-            this.scene.add(square);
+        // Inactive leading seek bars: years before minYear
+        for (let i = -40; i < 0; i++) {
+            createCell('leading_cell', i * this.getDistancePerYear(), false);
+        }
+
+        // Active seek bars: years between minYear and maxYear
+        for (let i = 0; i < this.numOfYears; i++) {
+            createCell(`cell_${(this.minYear + i).toString()}`, i * this.getDistancePerYear(), true);
+        }
+
+        // Inactive trailing seek bars: years after maxYear
+        for (let i = this.numOfYears; i < this.numOfYears + 40 / 2; i++) {
+            createCell('trailing_cell', i * this.getDistancePerYear(), false);
         }
     }
 
     private createCenterTick() {
-        const centerGeom = new THREE.PlaneGeometry(0.15, 1);
-        const centerMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const geometry = new THREE.PlaneGeometry(0.15, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-        const tick = new THREE.Mesh(centerGeom, centerMat);
-        tick.position.set(0, 0.2, 0);
-        this.scene.add(tick);
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(0, this.seekBarOffsetY, 0);
+        mesh.name = 'center_tick';
+        this.scene.add(mesh);
     }
 
-    startAnimation() {
-        if (this.isAnimating) return;  // Prevent starting multiple animations
-        this.isAnimating = true;
-        
-        const yearDuration = 1000; // 2 seconds
-        const yearDistance = this.rectWidth + this.gap; // distance to move squares
+    move(distance: number) {
+        this.seekBars.forEach((bar) => {
+            bar.position.x -= distance;
+        });
 
-        let last = performance.now(); // Use performance.now() for precise timing
-        let timeProgress = 0;
-
-        const animate = (currentTime: number) => {
-            if (!this.isAnimating) return;  // Stop animation if user clicks pause button
-
-            const tickTime = currentTime - last;
-            const tickDistance = (tickTime / yearDuration) * yearDistance;
-            
-            this.squares.forEach((square) => {
-                // Animate the squares by changing their x position
-                square.position.x -= tickDistance;
-            });
-
-            timeProgress += tickTime
-            last = currentTime;
-
-            this.sceneManager.render(); // Render the scene after updating square positions
-            
-            // Determine if animation should continue
-            if (timeProgress <= yearDuration) {
-                requestAnimationFrame(animate);
-            } else {
-                this.isAnimating = false; // Reset animation state after completion
-            }
-        };
-
-        requestAnimationFrame(animate);
+        this.sceneManager.render();
     }
 
-    stopAnimation() {
-        this.isAnimating = false;
+    getCurrentCell(): THREE.Intersection | null {
+        const intersects = this.sceneManager.getCenterIntersects();
+        const currentCell = intersects.filter((intersect) => intersect.object.name.includes('cell_'))[0] || null;
+        return currentCell;
     }
+
+    getDistancePerYear() {
+        return this.rectWidth + this.gap;
+    }
+
 }
