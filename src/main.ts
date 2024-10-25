@@ -17,7 +17,7 @@ class App {
         this.STICRead = new STICRead(minYear, maxYear);
 
         this.seekBar = new SeekBar(this.sceneManager, this.STICRead);
-        this.yearLabelManager = new YearLabelManager(this.sceneManager);
+        this.yearLabelManager = new YearLabelManager(this.sceneManager, this.STICRead);
         
         this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager, this.STICRead);
 
