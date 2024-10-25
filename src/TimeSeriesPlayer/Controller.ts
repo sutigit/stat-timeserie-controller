@@ -40,12 +40,91 @@ export default class PlayButton {
 
     private togglePlayPause(playPauseImg: HTMLImageElement) {
         if (this.isPlaying) {
+            // Stop animation and display play icon
+            this.stopSeekBar();
             playPauseImg.src = 'src/play.svg';
-            this.seekBar.stopAnimation();
         } else {
+            // Start animation and display pause icon
+            this.playSeekBar();
             playPauseImg.src = 'src/pause.svg';
-            this.seekBar.startAnimation();
         }
+
+        // Toggle play/pause state
         this.isPlaying = !this.isPlaying;
+    }
+
+    playSeekBar() {
+        const yearsToTravel = 10;
+        let yearsTraveled = 0;
+
+        const timePerYear = 2000; // 2 seconds
+        const distancePerYear = this.seekBar.getYearCellWidth(); // distance to move squares
+
+        let timeProgress = 0;
+        let distanceProgress = 0;
+        let overallTimeProgress = 0;
+        let overallDistanceProgress = 0;
+
+        // Use performance.now() for precise timing
+        let lastTime = performance.now();
+
+
+        const animate = (currentTime: number) => {
+
+            // Stops render recursion if user clicks pause button
+            console.log(this.isPlaying);
+            if (!this.isPlaying) return;
+
+            // Re-render scene per frame
+            this.sceneManager.render();
+
+            // Calculate changes to be made per frame
+            const timePerFrame = currentTime - lastTime;
+            const distancePerFrame = (timePerFrame / timePerYear) * distancePerYear;
+            lastTime = currentTime;
+
+
+            // Update progresses per frame
+            timeProgress += timePerFrame
+            overallTimeProgress += timePerFrame;
+
+            distanceProgress += distancePerFrame;
+            overallDistanceProgress += distancePerFrame;
+
+
+
+
+
+            if (timeProgress < timePerYear && distanceProgress < distancePerYear) {
+
+                this.seekBar.moveBy(distancePerFrame);
+
+                requestAnimationFrame(animate);
+
+            } 
+
+            else if ( overallTimeProgress < timePerYear * yearsToTravel && overallDistanceProgress < distancePerYear * yearsToTravel ) {
+                yearsTraveled++;
+
+                // Reset time and distance progress after each year
+                timeProgress = 0;
+                distanceProgress = 0;
+
+                // Move squares by distancePerYear
+                this.seekBar.moveTo(distancePerYear * yearsTraveled);
+
+                requestAnimationFrame(animate);
+            }
+
+            else {
+                this.isPlaying = false; // Reset animation state after completion
+            }
+        };
+
+        requestAnimationFrame(animate);
+    }
+
+    stopSeekBar() {
+        this.isPlaying = false;
     }
 }
