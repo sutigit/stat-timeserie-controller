@@ -11,38 +11,31 @@ export default class PlayButton {
     scene: THREE.Scene;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager
-    STICRead: STICRead;
-    
-    // HTML elements
-    playPauseButton: HTMLImageElement;
     
     // Animation properties
     isPlaying: boolean;
     animationId: number;
 
     // Animation timing properties
-    timePerYear: number;
-    distancePerYear: number;
-
-    // Year management
-    currentYear: number;
+    speed: number;
+    distance: number;
+        
+    // HTML elements
+    playPauseButton: HTMLImageElement;
 
     constructor(sceneManager: SceneManager, seekBar: SeekBar, yearLabelManager: YearLabelManager, STICRead: STICRead) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
         this.seekBar = seekBar;
         this.yearLabelManager = yearLabelManager;
-        this.STICRead = STICRead;
 
-        this.playPauseButton = this.createPlayPauseButton();
-        
         this.isPlaying = false;
         this.animationId = 0;
-
-        this.timePerYear = 2000;
-        this.distancePerYear = this.seekBar.getDistancePerYear();
-
-        this.currentYear = STICRead.getData('currentYear');
+        
+        this.speed = 2000; // Speed represents: milliseconds per year cell
+        this.distance = this.seekBar.getDistancePerYear(); // Distance represents: width of a year cell
+        
+        this.playPauseButton = this.createPlayPauseButton();
     }
 
     private createPlayPauseButton() {
@@ -71,7 +64,7 @@ export default class PlayButton {
         this.animateSeekBars(currentTime, lastTime);
 
         // Inspect current cell and update current year if cell changes  
-        this.updateCurrentYear(this.seekBar.getCurrentCell());
+        this.animateYearLabels(this.seekBar);
 
         // Call next frame
         this.animationId = requestAnimationFrame((requestTime) => this.animation(requestTime, currentTime));
@@ -89,15 +82,18 @@ export default class PlayButton {
 
     private animateSeekBars(currentTime: number, lastTime: number) {
         const elapsedTime = currentTime - lastTime;
-        const distance = (elapsedTime / this.timePerYear) * this.distancePerYear;
-        this.seekBar.move(distance);
+        const distancePerFrame = (elapsedTime / this.speed) * this.distance;
+        this.seekBar.move(distancePerFrame);
     }
 
-    private updateCurrentYear(inspectedCell: THREE.Intersection | null) {
-        if (inspectedCell) {
-            const inspectedCellYear = parseInt(inspectedCell.object.name.split('_')[1]);
-            if (inspectedCellYear !== this.currentYear) {
-                this.currentYear = inspectedCellYear;
+    private animateYearLabels(seekBar: SeekBar) {
+        const currentCell = seekBar.getCurrentCell();
+
+        if (currentCell) {
+            const currentCellYear = parseInt(currentCell.object.name.split('_')[1]);
+
+            if (currentCellYear !== this.yearLabelManager.getCurrentYear()) {
+                this.yearLabelManager.changeYearTo(currentCellYear);
             }
         }
     }

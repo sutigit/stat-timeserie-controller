@@ -6,7 +6,6 @@ export default class SeekBar {
     // Dependent classes
     sceneManager: SceneManager;
     scene: THREE.Scene;
-    STICRead: STICRead;
 
     // Geometry properties
     rectWidth: number;
@@ -25,7 +24,6 @@ export default class SeekBar {
     constructor(sceneManager: SceneManager, STICRead: STICRead) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
-        this.STICRead = STICRead;
 
         this.rectWidth = 2;
         this.rectHeight = 0.6;

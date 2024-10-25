@@ -1,15 +1,15 @@
 export default class STICRead {
+
+    // THIS CLASS REPRESENTS SINGLE SOURCE OF TRUTH
     
-    // Year management
+    // Time management
     minYear: number;
     maxYear: number;
     numOfYears: number;
+
+    // Year management
     currentYear: number;
     targetYear: number;
-
-    // Progress management
-    overallTimeProgress: number;
-    yearTimeProgress: number;
 
     // Mesh management
     yearCells: { 
@@ -24,9 +24,6 @@ export default class STICRead {
         this.currentYear = minYear;
         this.targetYear = maxYear;
         this.numOfYears = this.maxYear - this.minYear;
-
-        this.overallTimeProgress = 0;
-        this.yearTimeProgress = 0;
         
         this.yearCells = [];
     }

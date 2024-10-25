@@ -7,9 +7,8 @@ export default class YearLabelManager {
     // Dependent classes
     sceneManager: SceneManager;
     scene: THREE.Scene;
-    STICRead: STICRead;
 
-    // Year management
+    // Time properties
     minYear: number;
     maxYear: number;
     numOfYears: number;
@@ -18,10 +17,15 @@ export default class YearLabelManager {
     gap: number;
     labelOffsetY: number;
 
+    // Year management
+    currentYear: number;
+
+    // Meshes
+    yearLabels: CSS2DObject[]; // Store all year labels
+
     constructor(sceneManager: SceneManager, STICRead: STICRead) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
-        this.STICRead = STICRead;
 
         this.minYear = STICRead.getData('minYear');
         this.maxYear = STICRead.getData('maxYear');
@@ -29,6 +33,10 @@ export default class YearLabelManager {
 
         this.gap = 4;
         this.labelOffsetY = 2;
+
+        this.currentYear = STICRead.getData('currentYear');
+
+        this.yearLabels = [];
 
         this.createYearLabels();
     }
@@ -51,7 +59,7 @@ export default class YearLabelManager {
         }
     }
 
-    private createYearLabel(year: number, position: number): CSS2DObject {
+    private createYearLabel(year: number, position: number) {
         const div = document.createElement('div');
 
         div.style.color = '#ffffff';
@@ -66,8 +74,15 @@ export default class YearLabelManager {
         label.position.set(position * this.gap, this.labelOffsetY, 0);
         label.name = `label_${year.toString()}`;
         
+        this.yearLabels.push(label);
         this.scene.add(label);
+    }
 
-        return label;
+    changeYearTo(currentYear: number) {
+        this.currentYear = currentYear;
+    }
+
+    getCurrentYear() {
+        return this.currentYear;
     }
 }
