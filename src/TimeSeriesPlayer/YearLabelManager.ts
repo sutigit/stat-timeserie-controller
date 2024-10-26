@@ -3,6 +3,9 @@ import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import SceneManager from './SceneManager';
 import STICRead from './STICRead';
 
+// Utils
+import { easeOutQuad } from '../utils';
+
 export default class YearLabelManager {
     // Dependent classes
     sceneManager: SceneManager;
@@ -16,12 +19,22 @@ export default class YearLabelManager {
     // Geometry properties
     gap: number;
     labelOffsetY: number;
-
-    // Year management
-    currentYear: number;
+    maxFontSize: number;
+    minFontSize: number;
 
     // Meshes
     yearLabels: CSS2DObject[]; // Store all year labels
+
+    // Year management
+    currentYear: number;
+    currentYearObject: CSS2DObject | undefined;
+    prevYearObject: CSS2DObject | undefined;
+
+    // Animation properties
+    animationId: number;
+    animationMoveTime: number;
+    animationScaleTime: number;
+    lastTime: number;
 
     constructor(sceneManager: SceneManager, STICRead: STICRead) {
         this.sceneManager = sceneManager;
@@ -33,12 +46,22 @@ export default class YearLabelManager {
 
         this.gap = 4;
         this.labelOffsetY = 2;
-
-        this.currentYear = STICRead.getData('currentYear');
-
+        this.minFontSize = 12;
+        this.maxFontSize = 20;
+        
         this.yearLabels = [];
-
         this.createYearLabels();
+        
+        this.currentYear = STICRead.getData('currentYear');
+        this.currentYearObject = this.getYearLabelObject(this.currentYear);
+        this.prevYearObject = undefined;
+
+        this.animationId = 0;
+        this.animationMoveTime = 1000; // ms
+        this.animationScaleTime = 160; // ms
+        this.lastTime = 0;
+
+        this.scaleLabel(this.currentYearObject, 1);
     }
 
     private createYearLabels() {
@@ -63,23 +86,92 @@ export default class YearLabelManager {
         const div = document.createElement('div');
 
         div.style.color = '#ffffff';
-        div.style.fontFamily = 'Sans-Serif';
+        div.style.fontFamily = 'monospace';
         div.style.fontWeight = 'bold';
-        div.style.fontSize = '12px';
+        div.style.fontSize = `${this.minFontSize}px`;
         div.textContent = year.toString();
-        div.style.transition = 'font-size 0.1s ease';
-        div.style.willChange = 'font-size'; // Optimize for animation
 
         const label = new CSS2DObject(div);
         label.position.set(position * this.gap, this.labelOffsetY, 0);
         label.name = `label_${year.toString()}`;
-        
+
         this.yearLabels.push(label);
         this.scene.add(label);
     }
 
-    changeYearTo(currentYear: number) {
-        this.currentYear = currentYear;
+    private animateTo(year: number) {
+        const targetYear = this.getYearLabelObject(year);
+        if (!targetYear) return;
+
+        // Get distance from center for calculation
+        const distanceFromCenter = targetYear.position.x;
+
+        // Get the time of start of this animation
+        this.lastTime = performance.now();
+
+        // Recursively call animation
+        this.animationId = requestAnimationFrame((requestTime) => this.animation(requestTime, distanceFromCenter));
+    }
+
+    private animation(currentTime: number, startDistance: number) {
+        // Calculate elapsed time since animation start
+        const elapsedTime = currentTime - this.lastTime;
+
+        // Normalized progress of the animations (between 0 and 1)
+        const moveProgress = Math.min(elapsedTime / this.animationMoveTime, 1);
+        const scaleProgress = Math.min(elapsedTime / this.animationScaleTime, 1);
+
+        // Stop if animation is complete
+        if (moveProgress == 1 && scaleProgress == 1) {
+            cancelAnimationFrame(this.animationId);
+            return;
+        }
+
+        // Eased progress for decelerated movement
+        const easedMoveProgress = easeOutQuad(moveProgress);
+        const easedScaleProgress = easeOutQuad(scaleProgress);
+
+        // Calculate distance to move in this frame
+        const distanceToMove = startDistance * easedMoveProgress;
+
+        // Apply the movement to the labels
+        this.moveLabels(distanceToMove);
+
+        // Grow the target year label when distance shrinks
+        this.scaleLabel(this.currentYearObject, easedScaleProgress);
+
+        // Shrink the previous year label when distance grows
+        this.scaleLabel(this.prevYearObject, 1 - easedScaleProgress);
+
+        // Request next frame and pass remaining distance
+        this.animationId = requestAnimationFrame((requestTime) =>
+            this.animation(requestTime, startDistance * (1 - easedMoveProgress))
+        );
+    }
+
+    private moveLabels(distance: number) {
+        this.yearLabels.forEach(label => {
+            label.position.x -= distance;
+        });
+    }
+
+    private scaleLabel(yearObject: CSS2DObject | undefined | null, progress: number) {
+        if (!yearObject) return;
+        
+        const fontSize = this.minFontSize + (this.maxFontSize - this.minFontSize) * progress;
+        yearObject.element.style.fontSize = `${fontSize}px`;
+    }
+
+    private getYearLabelObject(year: number) {
+        return this.yearLabels.find(label => parseInt(label.name.split('_')[1]) === year);
+    }
+
+    setCurrentYear(year: number) {
+        this.currentYear = year;
+        this.prevYearObject = this.currentYearObject;
+        this.currentYearObject = this.getYearLabelObject(year);
+
+        this.animateTo(year);
     }
 
     getCurrentYear() {

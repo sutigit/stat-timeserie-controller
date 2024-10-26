@@ -66,8 +66,17 @@ export default class PlayButton {
         // Inspect current cell and update current year if cell changes  
         this.animateYearLabels(this.seekBar);
 
+        // Important: re-render the scene only here
+        this.sceneManager.render();
+
         // Call next frame
         this.animationId = requestAnimationFrame((requestTime) => this.animation(requestTime, currentTime));
+    }
+
+    private animateSeekBars(currentTime: number, lastTime: number) {
+        const elapsedTime = currentTime - lastTime;
+        const distancePerFrame = (elapsedTime / this.speed) * this.distance;
+        this.seekBar.move(distancePerFrame);
     }
 
     private startAnimation() {
@@ -80,20 +89,17 @@ export default class PlayButton {
         cancelAnimationFrame(this.animationId);
     }
 
-    private animateSeekBars(currentTime: number, lastTime: number) {
-        const elapsedTime = currentTime - lastTime;
-        const distancePerFrame = (elapsedTime / this.speed) * this.distance;
-        this.seekBar.move(distancePerFrame);
-    }
-
     private animateYearLabels(seekBar: SeekBar) {
+        // This function is called every frame but only 
+        // updates the year label if the current cell changes
+        
         const currentCell = seekBar.getCurrentCell();
 
         if (currentCell) {
             const currentCellYear = parseInt(currentCell.object.name.split('_')[1]);
 
             if (currentCellYear !== this.yearLabelManager.getCurrentYear()) {
-                this.yearLabelManager.changeYearTo(currentCellYear);
+                this.yearLabelManager.setCurrentYear(currentCellYear);
             }
         }
     }

@@ -83,8 +83,6 @@ export default class SeekBar {
         this.seekBars.forEach((bar) => {
             bar.position.x -= distance;
         });
-
-        this.sceneManager.render();
     }
 
     getCurrentCell(): THREE.Intersection | null {
