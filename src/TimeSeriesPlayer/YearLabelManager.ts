@@ -89,6 +89,8 @@ export default class YearLabelManager {
         div.style.fontFamily = 'monospace';
         div.style.fontWeight = 'bold';
         div.style.fontSize = `${this.minFontSize}px`;
+        div.style.textAlign = 'center';
+        div.style.willChange = 'font-size';
         div.textContent = year.toString();
 
         const label = new CSS2DObject(div);
