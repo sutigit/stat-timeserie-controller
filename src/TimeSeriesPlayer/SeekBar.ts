@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import SceneManager from './SceneManager';
 import STICRead from './STICRead';
 
+// utils
+import { easeOutQuad } from '../utils';
+
 export default class SeekBar {
     // Dependent classes
     sceneManager: SceneManager;
@@ -20,8 +23,15 @@ export default class SeekBar {
 
     // Scroll management
     pointer: THREE.Vector2;
+    scrollAllowed: boolean;
+    scrollStarted: boolean;
     containerWidth: number;
     containerHeight: number;
+    containerBounds: DOMRect;
+    isAnimating: boolean;
+    scrollingAnimId: number;
+    lastX: number;
+    currentX: number;
 
     // Meshes
     seekBars: THREE.Mesh[]; // Store all squares in seek bar
@@ -40,16 +50,27 @@ export default class SeekBar {
         this.numOfYears = STICRead.getData('numOfYears');
 
         this.pointer = new THREE.Vector2();
+        this.scrollAllowed = false;
+        this.scrollStarted = false;
         this.containerWidth = STICRead.getData('containerWidth');
         this.containerHeight = STICRead.getData('containerHeight');
+        this.containerBounds = STICRead.getData('containerBounds');
+        this.isAnimating = false;
+        this.scrollingAnimId = 0;
+        this.lastX = 0;
+        this.currentX = 0;
 
         this.seekBars = [];
 
         this.createSeekBars();
         this.createCenterTick();
 
-        window.addEventListener('pointermove', (event) => this.onPointerMove(event));
+        // Handle mouse events
+        window.addEventListener('mousemove', this.onMouseMove.bind(this));
+        window.addEventListener('mousedown', this.onMouseDown.bind(this));
+        window.addEventListener('mouseup', this.onMouseUp.bind(this));
 
+        // TODO: Handle touch events
     }
 
     private createSeekBars() {
@@ -86,26 +107,79 @@ export default class SeekBar {
         const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
         const mesh = new THREE.Mesh(geometry, material);
+
+        // make mesh undetectable by raycaster
+        mesh.raycast = () => { };
+
         mesh.position.set(0, this.seekBarOffsetY, 0);
-        mesh.name = 'center_tick';
+
         this.scene.add(mesh);
     }
 
-    onPointerMove(event: MouseEvent) {
-        // calculate pointer position in normalized device coordinates
-        // (-1 to +1)
-        const pointer = new THREE.Vector2();
-        pointer.x = (event.offsetX / this.containerWidth) * 2 - 1;
-        pointer.y = -(event.offsetY / this.containerHeight) * 2 + 1;
+    private onMouseMove(event: MouseEvent) {
+        // calculate pointer position in normalized device coordinates (-1 to +1)
+        this.pointer.x = (event.offsetX / this.containerWidth) * 2 - 1;
+        this.pointer.y = -(event.offsetY / this.containerHeight) * 2 + 1;
 
-        const intersects = this.sceneManager.getPointerIntersects(pointer);
-        const currentCell = intersects.filter((intersect) => intersect.object.name.includes('cell_'))[0] || null;
+        // Scroll is allowed when mouse is hovering over a cell
+        this.scrollAllowed = this.sceneManager.getPointerIntersects(this.pointer).length > 0;
 
-        if (currentCell) {
-            document.body.style.cursor = 'grab';
-        } else {
-            document.body.style.cursor = 'default';
+        // Change cursor style based on pointer action
+        switch (true) {
+            case this.scrollStarted:
+                document.body.style.cursor = 'grabbing';
+                break;
+            case this.scrollAllowed:
+                document.body.style.cursor = 'grab';
+                break;
+            default:
+                document.body.style.cursor = 'default';
         }
+
+        if (this.scrollStarted) {
+            this.currentX = event.clientX;
+            this.startScrollingAnim();
+        }
+    }
+
+    private onMouseDown(event: MouseEvent) {
+        if (this.scrollAllowed) {
+            this.currentX = this.lastX = event.clientX;
+            this.scrollStarted = true;
+        }
+    }
+
+    private onMouseUp() {
+        this.scrollStarted = false;
+        this.isAnimating = false;
+    }
+
+    private startScrollingAnim() {
+        // Prevent from starting multiple scrolling animations
+        if (this.isAnimating) return;
+
+        this.isAnimating = true;
+
+        // Start the scrolling animation
+        this.scrollingAnimId = requestAnimationFrame(this.scroll.bind(this));
+    }
+
+    private scroll() {
+        if (!this.isAnimating) {
+            cancelAnimationFrame(this.scrollingAnimId);
+            return;
+        }
+        
+        // Move the seek bars
+        const step = (this.currentX - this.lastX) / this.containerWidth * 10;
+        this.move(-easeOutQuad(step));
+        
+        this.lastX = this.currentX;
+
+        // Re-render the scene
+        this.sceneManager.render();
+
+        requestAnimationFrame(this.scroll.bind(this));
     }
 
     move(distance: number) {
@@ -123,5 +197,4 @@ export default class SeekBar {
     getDistancePerYear() {
         return this.rectWidth + this.gap;
     }
-
 }
