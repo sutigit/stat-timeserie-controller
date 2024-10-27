@@ -1,7 +1,11 @@
 export default class STICRead {
 
     // THIS CLASS REPRESENTS SINGLE SOURCE OF TRUTH
-    
+    // Container properties
+    container: HTMLDivElement;
+    containerWidth: number;
+    containerHeight: number;
+
     // Time management
     minYear: number;
     maxYear: number;
@@ -18,7 +22,10 @@ export default class STICRead {
         meshIndex: number,
     }[];
     
-    constructor(minYear: number, maxYear: number) {
+    constructor(container: HTMLDivElement, minYear: number, maxYear: number) {
+        this.container = container;
+        this.containerWidth = container.offsetWidth;
+        this.containerHeight = container.offsetHeight;
         this.minYear = minYear;
         this.maxYear = maxYear;
         this.currentYear = minYear;

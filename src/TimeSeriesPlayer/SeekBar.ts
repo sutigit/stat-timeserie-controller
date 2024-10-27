@@ -18,6 +18,11 @@ export default class SeekBar {
     minYear: number;
     numOfYears: number;
 
+    // Scroll management
+    pointer: THREE.Vector2;
+    containerWidth: number;
+    containerHeight: number;
+
     // Meshes
     seekBars: THREE.Mesh[]; // Store all squares in seek bar
 
@@ -34,17 +39,24 @@ export default class SeekBar {
         this.minYear = STICRead.getData('minYear');
         this.numOfYears = STICRead.getData('numOfYears');
 
+        this.pointer = new THREE.Vector2();
+        this.containerWidth = STICRead.getData('containerWidth');
+        this.containerHeight = STICRead.getData('containerHeight');
+
         this.seekBars = [];
 
         this.createSeekBars();
         this.createCenterTick();
+
+        window.addEventListener('pointermove', (event) => this.onPointerMove(event));
+
     }
 
     private createSeekBars() {
         const geometry = new THREE.PlaneGeometry(this.rectWidth, this.rectHeight);
         const activeColor = new THREE.MeshBasicMaterial({ color: 0x5f5d61 });
-        const inactiveColor = new THREE.MeshBasicMaterial({ color: 0x474649});
-        
+        const inactiveColor = new THREE.MeshBasicMaterial({ color: 0x474649 });
+
         const createCell = (name: string, position: number, active: boolean) => {
             const mesh = new THREE.Mesh(geometry, active ? activeColor : inactiveColor);
             mesh.position.set(position - this.seekBarOffsetX, this.seekBarOffsetY, 0);
@@ -55,7 +67,7 @@ export default class SeekBar {
 
         // Inactive leading seek bars: years before minYear
         for (let i = -40; i < 0; i++) {
-            createCell('leading_cell', i * this.getDistancePerYear(), false);
+            createCell('cell_leading', i * this.getDistancePerYear(), false);
         }
 
         // Active seek bars: years between minYear and maxYear
@@ -65,7 +77,7 @@ export default class SeekBar {
 
         // Inactive trailing seek bars: years after maxYear
         for (let i = this.numOfYears; i < this.numOfYears + 40 / 2; i++) {
-            createCell('trailing_cell', i * this.getDistancePerYear(), false);
+            createCell('cell_trailing', i * this.getDistancePerYear(), false);
         }
     }
 
@@ -77,6 +89,23 @@ export default class SeekBar {
         mesh.position.set(0, this.seekBarOffsetY, 0);
         mesh.name = 'center_tick';
         this.scene.add(mesh);
+    }
+
+    onPointerMove(event: MouseEvent) {
+        // calculate pointer position in normalized device coordinates
+        // (-1 to +1)
+        const pointer = new THREE.Vector2();
+        pointer.x = (event.offsetX / this.containerWidth) * 2 - 1;
+        pointer.y = -(event.offsetY / this.containerHeight) * 2 + 1;
+
+        const intersects = this.sceneManager.getPointerIntersects(pointer);
+        const currentCell = intersects.filter((intersect) => intersect.object.name.includes('cell_'))[0] || null;
+
+        if (currentCell) {
+            document.body.style.cursor = 'grab';
+        } else {
+            document.body.style.cursor = 'default';
+        }
     }
 
     move(distance: number) {
