@@ -11,7 +11,7 @@ export default class PlayButton {
     scene: THREE.Scene;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager
-    
+
     // Animation properties
     isPlaying: boolean;
     animationId: number;
@@ -19,7 +19,7 @@ export default class PlayButton {
     // Animation timing properties
     speed: number;
     distance: number;
-        
+
     // HTML elements
     playPauseButton: HTMLImageElement;
 
@@ -31,10 +31,10 @@ export default class PlayButton {
 
         this.isPlaying = false;
         this.animationId = 0;
-        
+
         this.speed = 2000; // Speed represents: milliseconds per year cell
         this.distance = this.seekBar.getDistancePerYear(); // Distance represents: width of a year cell
-        
+
         this.playPauseButton = this.createPlayPauseButton();
     }
 
@@ -62,30 +62,9 @@ export default class PlayButton {
         this.isPlaying = !this.isPlaying;
     }
 
-    private animation(currentTime: number, lastTime: number) {
-
-        // Move seek bar per frame
-        this.animateSeekBars(currentTime, lastTime);
-
-        // Inspect current cell and update current year if cell changes  
-        this.animateYearLabels(this.seekBar);
-
-        // Important: re-render the scene only here
-        this.sceneManager.render();
-
-        // Call next frame
-        this.animationId = requestAnimationFrame((requestTime) => this.animation(requestTime, currentTime));
-    }
-
-    private animateSeekBars(currentTime: number, lastTime: number) {
-        const elapsedTime = currentTime - lastTime;
-        const distancePerFrame = (elapsedTime / this.speed) * this.distance;
-        this.seekBar.move(distancePerFrame);
-    }
-
     private startAnimation() {
         this.playPauseButton.src = 'src/pause.svg';
-        this.animationId = requestAnimationFrame((requestTime) => this.animation(requestTime, performance.now()));
+        this.animationId = requestAnimationFrame((requestTime) => this.animations(requestTime, performance.now()));
     }
 
     private stopAnimation() {
@@ -93,10 +72,31 @@ export default class PlayButton {
         cancelAnimationFrame(this.animationId);
     }
 
-    private animateYearLabels(seekBar: SeekBar) {
+    private animations(currentTime: number, lastTime: number) {
+
+        // Move seek bar per frame
+        this.seekBarsAnimation(currentTime, lastTime);
+
+        // Inspect current cell and update current year if cell changes  
+        this.yearLabelsAnimation(this.seekBar);
+
+        // Important: re-render the scene only here
+        this.sceneManager.render();
+
+        // Call next frame
+        this.animationId = requestAnimationFrame((requestTime) => this.animations(requestTime, currentTime));
+    }
+
+    private seekBarsAnimation(currentTime: number, lastTime: number) {
+        const elapsedTime = currentTime - lastTime;
+        const distancePerFrame = (elapsedTime / this.speed) * this.distance;
+        this.seekBar.move(distancePerFrame);
+    }
+
+    private yearLabelsAnimation(seekBar: SeekBar) {
         // This function is called every frame but only 
         // updates the year label if the current cell changes
-        
+
         const currentCell = seekBar.getCurrentCell();
 
         if (currentCell) {
