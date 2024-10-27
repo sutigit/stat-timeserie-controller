@@ -5,6 +5,7 @@ export default class STICRead {
     container: HTMLDivElement;
     containerWidth: number;
     containerHeight: number;
+    containerBounds: DOMRect;
 
     // Time management
     minYear: number;
@@ -26,6 +27,7 @@ export default class STICRead {
         this.container = container;
         this.containerWidth = container.offsetWidth;
         this.containerHeight = container.offsetHeight;
+        this.containerBounds = container.getBoundingClientRect();
         this.minYear = minYear;
         this.maxYear = maxYear;
         this.currentYear = minYear;
