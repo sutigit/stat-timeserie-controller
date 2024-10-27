@@ -97,6 +97,9 @@ export default class YearLabelManager {
         label.position.set(position * this.gap, this.labelOffsetY, 0);
         label.name = `label_${year.toString()}`;
 
+        // make label undetectable by raycaster
+        label.raycast = () => {};
+
         this.yearLabels.push(label);
         this.scene.add(label);
     }

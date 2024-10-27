@@ -49,6 +49,10 @@ export default class PlayButton {
 
         const playPauseButton = new CSS2DObject(playPauseImg);
         playPauseButton.position.set(0, -2, 0);
+
+        // Make button undetectable by raycaster
+        playPauseButton.raycast = () => {};
+
         this.scene.add(playPauseButton);
         return playPauseImg;
     }
