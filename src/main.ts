@@ -36,8 +36,6 @@ export default class StatMapController {
         const container = document.getElementById(id) as HTMLElement;
 
         if (container) {
-            container.style.width = '600px';
-            container.style.height = '160px';
             container.style.backgroundColor = '#221f22de';
             container.style.display = 'flex';
             container.style.borderRadius = '24px';
