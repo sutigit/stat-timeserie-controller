@@ -2,10 +2,9 @@ import SceneManager from './TimeSeriesPlayer/SceneManager';
 import SeekBar from './TimeSeriesPlayer/SeekBar';
 import YearLabelManager from './TimeSeriesPlayer/YearLabelManager';
 import Controller from './TimeSeriesPlayer/Controller';
-import Environment from './Environment';
 import STICRead from './TimeSeriesPlayer/STICRead';
 
-class App {
+export default class StatMapController {
     controller: Controller;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager;
@@ -29,8 +28,4 @@ class App {
     }
 }
 
-// Initialize the application
-const hostEnv = new Environment();
-const container = hostEnv.getTimeSeriesPlayer();
 
-new App(container, 1987, 2024);
