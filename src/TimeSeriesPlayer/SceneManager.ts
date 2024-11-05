@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
-import STICRead from './STICRead';
+import Data from './Data';
 
 export default class SceneManager {
     scene: THREE.Scene;
@@ -10,11 +10,11 @@ export default class SceneManager {
     centerRaycaster: THREE.Raycaster;
     pointerRaycaster: THREE.Raycaster;
 
-    constructor(STICRead: STICRead) {
+    constructor(Data: Data) {
         this.scene = this.createScene();
-        this.camera = this.createCamera(STICRead);
-        this.renderer = this.createRenderer(STICRead);
-        this.labelRenderer = this.createLabelRenderer(STICRead);
+        this.camera = this.createCamera(Data);
+        this.renderer = this.createRenderer(Data);
+        this.labelRenderer = this.createLabelRenderer(Data);
         this.centerRaycaster = new THREE.Raycaster();
         this.pointerRaycaster = new THREE.Raycaster();
     }
@@ -23,27 +23,27 @@ export default class SceneManager {
         return new THREE.Scene();
     }
 
-    private createCamera(STICRead: STICRead) {
-        const camera = new THREE.PerspectiveCamera(75, STICRead.getData('containerWidth') / STICRead.getData('containerHeight'), 0.1, 1000);
+    private createCamera(Data: Data) {
+        const camera = new THREE.PerspectiveCamera(75, Data.getData('elementWidth') / Data.getData('elementHeight'), 0.1, 1000);
         camera.name = 'camera';
         camera.position.setZ(5);
         camera.lookAt(0, 0, 0);
         return camera
     }
 
-    private createRenderer(STICRead: STICRead) {
+    private createRenderer(Data: Data) {
         const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(STICRead.getData('containerWidth'), STICRead.getData('containerHeight'));
-        STICRead.getData('container').appendChild(renderer.domElement);
+        renderer.setSize(Data.getData('elementWidth'), Data.getData('elementHeight'));
+        Data.getData('element').appendChild(renderer.domElement);
         return renderer;
     }
 
-    private createLabelRenderer(STICRead: STICRead) {
+    private createLabelRenderer(Data: Data) {
         const labelRenderer = new CSS2DRenderer();
-        labelRenderer.setSize(STICRead.getData('containerWidth'), STICRead.getData('containerHeight'));
+        labelRenderer.setSize(Data.getData('elementWidth'), Data.getData('elementHeight'));
         labelRenderer.domElement.style.position = 'absolute';
         labelRenderer.domElement.style.top = '0px';
-        STICRead.getData('container').appendChild(labelRenderer.domElement);
+        Data.getData('element').appendChild(labelRenderer.domElement);
         return labelRenderer;
     }
 

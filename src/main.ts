@@ -2,14 +2,14 @@ import SceneManager from './TimeSeriesPlayer/SceneManager';
 import SeekBar from './TimeSeriesPlayer/SeekBar';
 import YearLabelManager from './TimeSeriesPlayer/YearLabelManager';
 import Controller from './TimeSeriesPlayer/Controller';
-import STICRead from './TimeSeriesPlayer/STICRead';
+import Data from './TimeSeriesPlayer/Data';
 
 export default class StatMapController {
     controller: Controller;
     seekBar: SeekBar;
     yearLabelManager: YearLabelManager;
     sceneManager: SceneManager;
-    STICRead: STICRead;
+    data: Data;
 
     constructor({
         id,
@@ -22,52 +22,49 @@ export default class StatMapController {
     }) {
         const element = this.setStatMapControllerElement(id);
 
-        this.STICRead = new STICRead(element, minYear, maxYear);
-        this.sceneManager = new SceneManager(this.STICRead);
-        this.seekBar = new SeekBar(this.sceneManager, this.STICRead);
-        this.yearLabelManager = new YearLabelManager(this.sceneManager, this.STICRead);
-        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager, this.STICRead);
+        this.data = new Data(element, minYear, maxYear);
+
+        this.sceneManager = new SceneManager(this.data);
+        this.seekBar = new SeekBar(this.sceneManager, this.data);
+        this.yearLabelManager = new YearLabelManager(this.sceneManager, this.data);
+        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager, this.data);
 
         this.init();
     }
 
-    setStatMapControllerElement(id: string) {
-        const container = document.getElementById(id) as HTMLDivElement;
+    private setStatMapControllerElement(id: string) {
+        const container = document.getElementById(id) as HTMLElement;
 
         if (container) {
             container.style.width = '600px';
             container.style.height = '160px';
             container.style.backgroundColor = '#221f22de';
             container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
             container.style.borderRadius = '24px';
             container.style.overflow = 'hidden';
             container.style.backdropFilter = 'blur(8px)';
 
-            const timeseries = this.createTimeSeriesPlayer();
+            const element = this.createElement();
 
-            container.appendChild(timeseries);
+            container.appendChild(element);
 
-            return timeseries;
+            return element;
         }
         else {
             throw new Error(`Element with id ${id} not found`);
         }
     }
 
-    createTimeSeriesPlayer() {
-        const timeseries = document.createElement('div');
-        timeseries.id = 'target';
-        timeseries.style.width = '100%';
-        timeseries.style.height = '100%';
-        timeseries.style.position = 'relative';
+    private createElement() {
+        const element = document.createElement('div');
+        element.style.width = '100%';
+        element.style.height = '100%';
         // // Add a CSS mask to create the fade-out effect at the edges
-        timeseries.style.maskImage = `
+        element.style.maskImage = `
                 linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%)
             `; // TODO: add Safari support
     
-        return timeseries;
+        return element;
     }
     
 

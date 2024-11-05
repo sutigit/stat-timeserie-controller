@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import SceneManager from './SceneManager';
-import STICRead from './STICRead';
+import STICRead from './Data';
 
 // utils
 import { easeOutQuad } from '../utils';

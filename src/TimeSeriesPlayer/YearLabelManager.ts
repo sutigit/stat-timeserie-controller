@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import SceneManager from './SceneManager';
-import STICRead from './STICRead';
+import STICRead from './Data';
 
 // Utils
 import { easeOutQuad } from '../utils';
