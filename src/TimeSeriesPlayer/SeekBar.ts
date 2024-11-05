@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import SceneManager from './SceneManager';
-import STICRead from './Data';
+import Data from './Data';
 
 // utils
 import { easeOutQuad } from '../utils';
@@ -36,7 +36,7 @@ export default class SeekBar {
     // Meshes
     seekBars: THREE.Mesh[]; // Store all squares in seek bar
 
-    constructor(sceneManager: SceneManager, STICRead: STICRead) {
+    constructor(sceneManager: SceneManager, Data: Data) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
 
@@ -46,15 +46,15 @@ export default class SeekBar {
         this.seekBarOffsetY = 0.2;
         this.seekBarOffsetX = -this.rectWidth / 2;
 
-        this.minYear = STICRead.getData('minYear');
-        this.numOfYears = STICRead.getData('numOfYears');
+        this.minYear = Data.get('minYear');
+        this.numOfYears = Data.get('numOfYears');
 
         this.pointer = new THREE.Vector2();
         this.scrollAllowed = false;
         this.scrollStarted = false;
-        this.elementWidth = STICRead.getData('elementWidth');
-        this.elementHeight = STICRead.getData('elementHeight');
-        this.elementBounds = STICRead.getData('elementBounds');
+        this.elementWidth = Data.get('elementWidth');
+        this.elementHeight = Data.get('elementHeight');
+        this.elementBounds = Data.get('elementBounds');
         this.isAnimating = false;
         this.scrollingAnimId = 0;
         this.lastX = 0;

@@ -24,7 +24,7 @@ export default class SceneManager {
     }
 
     private createCamera(Data: Data) {
-        const camera = new THREE.PerspectiveCamera(75, Data.getData('elementWidth') / Data.getData('elementHeight'), 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, Data.get('elementWidth') / Data.get('elementHeight'), 0.1, 1000);
         camera.name = 'camera';
         camera.position.setZ(5);
         camera.lookAt(0, 0, 0);
@@ -33,17 +33,17 @@ export default class SceneManager {
 
     private createRenderer(Data: Data) {
         const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(Data.getData('elementWidth'), Data.getData('elementHeight'));
-        Data.getData('element').appendChild(renderer.domElement);
+        renderer.setSize(Data.get('elementWidth'), Data.get('elementHeight'));
+        Data.get('element').appendChild(renderer.domElement);
         return renderer;
     }
 
     private createLabelRenderer(Data: Data) {
         const labelRenderer = new CSS2DRenderer();
-        labelRenderer.setSize(Data.getData('elementWidth'), Data.getData('elementHeight'));
+        labelRenderer.setSize(Data.get('elementWidth'), Data.get('elementHeight'));
         labelRenderer.domElement.style.position = 'absolute';
         labelRenderer.domElement.style.top = '0px';
-        Data.getData('element').appendChild(labelRenderer.domElement);
+        Data.get('element').appendChild(labelRenderer.domElement);
         return labelRenderer;
     }
 

@@ -3,7 +3,6 @@ import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import SceneManager from './SceneManager';
 import SeekBar from './SeekBar';
 import YearLabelManager from './YearLabelManager';
-import STICRead from './Data';
 
 export default class PlayButton {
     // Dependent classes
@@ -23,7 +22,7 @@ export default class PlayButton {
     // HTML elements
     playPauseButton: HTMLImageElement;
 
-    constructor(sceneManager: SceneManager, seekBar: SeekBar, yearLabelManager: YearLabelManager, STICRead: STICRead) {
+    constructor(sceneManager: SceneManager, seekBar: SeekBar, yearLabelManager: YearLabelManager) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
         this.seekBar = seekBar;

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import SceneManager from './SceneManager';
-import STICRead from './Data';
+import Data from './Data';
 
 // Utils
 import { easeOutQuad } from '../utils';
@@ -36,13 +36,13 @@ export default class YearLabelManager {
     animationScaleTime: number;
     lastTime: number;
 
-    constructor(sceneManager: SceneManager, STICRead: STICRead) {
+    constructor(sceneManager: SceneManager, Data: Data) {
         this.sceneManager = sceneManager;
         this.scene = sceneManager.getScene();
 
-        this.minYear = STICRead.getData('minYear');
-        this.maxYear = STICRead.getData('maxYear');
-        this.numOfYears = STICRead.getData('numOfYears');
+        this.minYear = Data.get('minYear');
+        this.maxYear = Data.get('maxYear');
+        this.numOfYears = Data.get('numOfYears');
 
         this.gap = 4;
         this.labelOffsetY = 2;
@@ -52,7 +52,7 @@ export default class YearLabelManager {
         this.yearLabels = [];
         this.createYearLabels();
         
-        this.currentYear = STICRead.getData('currentYear');
+        this.currentYear = Data.get('currentYear');
         this.currentYearObject = this.getYearLabelObject(this.currentYear);
         this.prevYearObject = undefined;
 

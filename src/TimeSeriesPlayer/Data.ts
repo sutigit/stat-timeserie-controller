@@ -28,13 +28,13 @@ export default class Data {
         this.numOfYears = this.maxYear - this.minYear;        
     }
 
-    getAllData() {
+    getAll() {
         return Object.fromEntries(
             Object.keys(this).map((key) => [key, this[key as keyof this]])
         );
     }
 
-    getData<K extends keyof Data>(name: K): Data[K] {
+    get<K extends keyof Data>(name: K): Data[K] {
         return this[name];
     }
 }

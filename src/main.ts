@@ -27,7 +27,7 @@ export default class StatMapController {
         this.sceneManager = new SceneManager(this.data);
         this.seekBar = new SeekBar(this.sceneManager, this.data);
         this.yearLabelManager = new YearLabelManager(this.sceneManager, this.data);
-        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager, this.data);
+        this.controller = new Controller(this.sceneManager, this.seekBar, this.yearLabelManager);
 
         this.init();
     }
