@@ -32,7 +32,7 @@ export default class PlayButton {
         this.isPlaying = false;
         this.animationId = 0;
 
-        this.speed = 2000; // Speed represents: milliseconds per year cell
+        this.speed = 1600; // Speed represents: milliseconds per year cell
         this.distance = this.seekBar.getDistancePerYear(); // Distance represents: width of a year cell
 
         this.playPauseButton = this.createPlayPauseButton();

@@ -25,9 +25,9 @@ export default class SeekBar {
     pointer: THREE.Vector2;
     scrollAllowed: boolean;
     scrollStarted: boolean;
-    containerWidth: number;
-    containerHeight: number;
-    containerBounds: DOMRect;
+    elementWidth: number;
+    elementHeight: number;
+    elementBounds: DOMRect;
     isAnimating: boolean;
     scrollingAnimId: number;
     lastX: number;
@@ -52,9 +52,9 @@ export default class SeekBar {
         this.pointer = new THREE.Vector2();
         this.scrollAllowed = false;
         this.scrollStarted = false;
-        this.containerWidth = STICRead.getData('containerWidth');
-        this.containerHeight = STICRead.getData('containerHeight');
-        this.containerBounds = STICRead.getData('containerBounds');
+        this.elementWidth = STICRead.getData('elementWidth');
+        this.elementHeight = STICRead.getData('elementHeight');
+        this.elementBounds = STICRead.getData('elementBounds');
         this.isAnimating = false;
         this.scrollingAnimId = 0;
         this.lastX = 0;
@@ -118,8 +118,8 @@ export default class SeekBar {
 
     private onMouseMove(event: MouseEvent) {
         // calculate pointer position in normalized device coordinates (-1 to +1)
-        this.pointer.x = (event.offsetX / this.containerWidth) * 2 - 1;
-        this.pointer.y = -(event.offsetY / this.containerHeight) * 2 + 1;
+        this.pointer.x = (event.offsetX / this.elementWidth) * 2 - 1;
+        this.pointer.y = -(event.offsetY / this.elementHeight) * 2 + 1;
 
         // Scroll is allowed when mouse is hovering over a cell
         this.scrollAllowed = this.sceneManager.getPointerIntersects(this.pointer).length > 0;
@@ -171,7 +171,7 @@ export default class SeekBar {
         }
         
         // Move the seek bars
-        const step = (this.currentX - this.lastX) / this.containerWidth * 10;
+        const step = (this.currentX - this.lastX) / this.elementWidth * 10;
         this.move(-easeOutQuad(step));
         
         this.lastX = this.currentX;
