@@ -1,19 +1,18 @@
-import StatMapController from './main';
-import Environment from './Environment';
-
-// Create a div element to render the controller
-// const myDiv = document.createElement('div');
-// myDiv.id = 'myDiv';
-// myDiv.style.width = '600px';
-// myDiv.style.height = '160px';
-// document.querySelector('#app')?.appendChild(myDiv);
+// Simulating a target div from your project
+const myDiv = document.createElement('div');
+myDiv.id = 'target';
+document.querySelector('#app')?.appendChild(myDiv);
 
 
 // EXAMPLE USAGE
 
-// Initialize the application
-const hostEnv = new Environment();
-const container = hostEnv.getTimeSeriesPlayer();
+// import
+import StatMapController from './main';
 
-new StatMapController(container, 1987, 2024);
+// instantiate
+new StatMapController({
+    id: 'target',
+    minYear: 1987,
+    maxYear: 2024
+});
 
