@@ -1,8 +1,8 @@
-import SceneManager from './TimeSeriesPlayer/SceneManager';
-import SeekBar from './TimeSeriesPlayer/SeekBar';
-import YearLabelManager from './TimeSeriesPlayer/YearLabelManager';
-import Controller from './TimeSeriesPlayer/Controller';
-import Data from './TimeSeriesPlayer/Data';
+import SceneManager from './components/SceneManager';
+import SeekBar from './components/SeekBar';
+import YearLabelManager from './components/YearLabelManager';
+import Controller from './components/Controller';
+import Data from './components/Data';
 
 export default class StatMapController {
     controller: Controller;
