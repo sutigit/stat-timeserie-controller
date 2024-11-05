@@ -39,7 +39,7 @@ export default class PlayButton {
 
     private createPlayPauseButton() {
         const playPauseImg = document.createElement('img');
-        playPauseImg.src = 'src/play.svg';
+        playPauseImg.src = 'src/icons/play.svg';
         playPauseImg.style.width = '38px';
         playPauseImg.style.height = '38px';
         playPauseImg.style.cursor = 'pointer';
@@ -62,12 +62,12 @@ export default class PlayButton {
     }
 
     private startAnimation() {
-        this.playPauseButton.src = 'src/pause.svg';
+        this.playPauseButton.src = 'src/icons/pause.svg';
         this.animationId = requestAnimationFrame((requestTime) => this.animations(requestTime, performance.now()));
     }
 
     private stopAnimation() {
-        this.playPauseButton.src = 'src/play.svg';
+        this.playPauseButton.src = 'src/icons/play.svg';
         cancelAnimationFrame(this.animationId);
     }
 
